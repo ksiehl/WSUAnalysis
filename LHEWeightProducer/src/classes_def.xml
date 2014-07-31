@@ -1,0 +1,11 @@
+<lcgdict>
+  <!--class name="MGWeightsContainer"                            /-->
+  <!--class name="std::vector<MGWeightsContainer>"               /-->
+  <!--class name="edm::Wrapper<std::vector<MGWeightsContainer> >"/-->
+  
+  <class name="std::map<      std::string, double>"/>
+  <class name="std::map<      std::string, float >"/>
+  
+  <class name="edm::Wrapper<std::map<      std::string, double> >"/>
+  <class name="edm::Wrapper<std::map<      std::string, float > >"/>
+</lcgdict>
