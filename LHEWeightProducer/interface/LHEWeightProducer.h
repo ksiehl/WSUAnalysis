@@ -31,6 +31,7 @@
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
+#include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHERunInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
 #include "FWCore/Utilities/interface/EDMException.h"
@@ -52,14 +53,14 @@ class LHEWeightProducer : public edm::EDProducer {
       static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
    private:
-      virtual void beginJob() override;
-      virtual void produce(edm::Event&, const edm::EventSetup&) override;
-      virtual void endJob() override;
+      virtual void beginJob();
+      virtual void produce(edm::Event&, const edm::EventSetup&);
+      virtual void endJob();
       
-      //virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
-      //virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
-      //virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
-      //virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
+      //virtual void beginRun(edm::Run const&, edm::EventSetup const&);
+      //virtual void endRun(edm::Run const&, edm::EventSetup const&);
+      //virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
+      //virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
 
       // ----------member data ---------------------------
       edm::InputTag lhesrc_;
