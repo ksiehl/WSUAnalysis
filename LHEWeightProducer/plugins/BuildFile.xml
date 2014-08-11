@@ -4,3 +4,4 @@
 <use name="PhysicsTools/HepMCCandAlgos"/>
 <use name="SimDataFormats/GeneratorProducts"/>
 <flags EDM_PLUGIN="1"/>
+<flags CXXFLAGS="-g0 -O3 -fno-inline"/>

@@ -12,7 +12,7 @@ process.maxEvents = cms.untracked.PSet(
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        'file:/tmp/sturdy/CMSSW_5_3_14/src/testOut.root'
+        'file:testOut.root'
     )
 )
 

@@ -18,7 +18,7 @@ LHEWeightProducer::LHEWeightProducer(const edm::ParameterSet& cfg):
   if (produceAllWeights_ && !makeWeightsMap_)
     for (int wgtNum = 0; wgtNum < numWeights_; ++wgtNum) {
       std::stringstream prodname;
-      prodname << "mg:reweight:" << (wgtNum+1);
+      prodname << "mg-reweight-" << (wgtNum+1);
       if (debug_)
 	std::cout << "DEBUG::" << prodname.str() << std::endl;
       produces <double>(prodname.str());
@@ -89,8 +89,8 @@ void LHEWeightProducer::produce(edm::Event& ev, const edm::EventSetup& es)
 {
   using namespace edm;
   //Read 'LHEEventProduct' from the Event
-  //Handle<LHEEventProduct> lhevt;
-  Handle<GenEventInfoProduct> lhevt;
+  edm::Handle<LHEEventProduct> lhevt;
+  //edm::Handle<GenEventInfoProduct> lhevt;
   ev.getByLabel(lhesrc_,lhevt);
   
   /****
@@ -131,20 +131,21 @@ void LHEWeightProducer::produce(edm::Event& ev, const edm::EventSetup& es)
     if (debug_)
       std::cout << "DEBUG::weights:" << std::endl;
     for ( size_t iwgt = 0; iwgt < lhevt->weights().size(); ++iwgt ) {
-      double wgt = lhevt->weights().at(iwgt);
-      /*
       const LHEEventProduct::WGT& wgt = lhevt->weights().at(iwgt);
       if (debug_)
 	std::cout << "DEBUG::\t" << wgt.id << ' ' 
 		  << std::scientific << wgt.wgt << std::endl;
       
       //put all weights as individual products
+      std::stringstream sskey;
+      sskey << "mg_reweight_" << iwgt;
+      std::string key = sskey.str();
       if (produceAllWeights_ && !makeWeightsMap_) {
 	std::auto_ptr<double> pOut(new double(wgt.wgt));
 	std::string key = wgt.id;
 	if (debug_)
 	  std::cout << "DEBUG::before replace: " << key << std::endl;
-	std::replace(key.begin(), key.end(), '_', ':');
+	std::replace(key.begin(), key.end(), '_', '-');
 	if (debug_)
 	  std::cout << "DEBUG::after replace: " << key << std::endl;
 	ev.put(pOut , key);
@@ -156,12 +157,10 @@ void LHEWeightProducer::produce(edm::Event& ev, const edm::EventSetup& es)
       //generate the weighs map as a product
       if (makeWeightsMap_ && !produceAllWeights_)
 	(*weightMap)[wgt.id] = wgt.wgt;
-      */
 
+      /*
+      //double wgt = lhevt->weights().at(iwgt);
       //put all weights as individual products
-      std::stringstream sskey;
-      sskey << "mg_reweight_" << iwgt;
-      std::string key = sskey.str();
       if (produceAllWeights_ && !makeWeightsMap_) {
 	std::auto_ptr<double> pOut(new double(wgt));
 	if (debug_)
@@ -178,6 +177,7 @@ void LHEWeightProducer::produce(edm::Event& ev, const edm::EventSetup& es)
       //generate the weighs map as a product
       if (makeWeightsMap_ && !produceAllWeights_)
 	(*weightMap)[key] = wgt;
+      */
     }
   }
   
