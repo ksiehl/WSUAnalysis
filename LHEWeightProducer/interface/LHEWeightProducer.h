@@ -45,7 +45,8 @@
 // class declaration
 //
 
-class LHEWeightProducer : public edm::EDProducer {
+class LHEWeightProducer : public edm::EDProducer 
+{
    public:
       explicit LHEWeightProducer(const edm::ParameterSet&);
       ~LHEWeightProducer();
@@ -63,6 +64,7 @@ class LHEWeightProducer : public edm::EDProducer {
       //virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
 
       // ----------member data ---------------------------
+      edm::EDGetTokenT<reco::> lheToken_; //added for new requirement of consumes call
       edm::InputTag lhesrc_;
       std::string label_;
       bool makeWeightsMap_;

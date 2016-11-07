@@ -5,6 +5,6 @@ MGWeightsFromLHE = cms.EDProducer('LHEWeightProducer',
     weightLabel       = cms.string("mg_reweight_13"),
     makeWeightsMap    = cms.untracked.bool(True),
     produceAllWeights = cms.untracked.bool(False),
-    numWeights        = cms.int32(30),
+    numWeights        = cms.int32(50),
     debug             = cms.untracked.bool(False)
 )

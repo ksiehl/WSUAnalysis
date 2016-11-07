@@ -13,8 +13,10 @@
 #include <string>
 #include <vector>
 
-namespace WSUAnaalusis_LHEWeightProducer {
-  struct WSUAnaalusis_LHEWeightProducer_dictionary {
+namespace WSUAnalysis_LHEWeightProducer 
+{
+  struct WSUAnalysis_LHEWeightProducer_dictionary 
+  {
     //MGWeightsContainer dummy0;
     //edm::Wrapper<MGWeightsContainer> dummy1;
     

@@ -13,16 +13,17 @@ LHEWeightProducer::LHEWeightProducer(const edm::ParameterSet& cfg):
   //map based product not quite working yet
   if (makeWeightsMap_ && !produceAllWeights_)
     produces <std::map<std::basic_string<char>,double> >("MGWeightMap");
-
+  ///////////produces <double>("mgreweight0");//////////////
   //loop over all weight names and generate a product
   if (produceAllWeights_ && !makeWeightsMap_)
-    for (int wgtNum = 0; wgtNum < numWeights_; ++wgtNum) {
-      std::stringstream prodname;
-      prodname << "mg:reweight:" << (wgtNum+1);
-      if (debug_)
-	std::cout << "DEBUG::" << prodname.str() << std::endl;
-      produces <double>(prodname.str());
-    }
+    for (int wgtNum = 0; wgtNum < numWeights_; ++wgtNum) 
+      {
+	std::stringstream prodname;
+	prodname << "mgreweight" << (wgtNum+1);
+	if (debug_)
+	  std::cout << "DEBUG::" << prodname.str() << std::endl;
+	produces <double>(prodname.str());
+      }
   
   /**
    * individually specify the product label
@@ -74,6 +75,7 @@ LHEWeightProducer::LHEWeightProducer(const edm::ParameterSet& cfg):
   ////if you want to put into the Run
   //produces <double,InRun>();
   
+  //lheToken_ = consumes<reco::>(lhesrc_);
 }
 
 
@@ -89,9 +91,12 @@ void LHEWeightProducer::produce(edm::Event& ev, const edm::EventSetup& es)
 {
   using namespace edm;
   //Read 'LHEEventProduct' from the Event
-  //Handle<LHEEventProduct> lhevt;
-  Handle<GenEventInfoProduct> lhevt;
+  edm::Handle<LHEEventProduct> lhevt; //i added edm:: and uncommented
+  //edm::Handle<GenEventInfoProduct> lhevt; //i added edm:: and commented
   ev.getByLabel(lhesrc_,lhevt);
+
+  edm::Handle<> lheColl; //added for new requirement
+  ev.getByToken(lheToken_, lheColl); //added for new requirement
   
   /****
        const lhef::HEPEUP hepeup_ = lhevt->hepeup();
@@ -127,70 +132,88 @@ void LHEWeightProducer::produce(edm::Event& ev, const edm::EventSetup& es)
   ***/
   std::auto_ptr<std::map<std::basic_string<char>, double> > weightMap(new std::map<std::basic_string<char>,double>());
   double prodWeight = 0.0;
-  if( lhevt->weights().size() ) {
-    if (debug_)
-      std::cout << "DEBUG::weights:" << std::endl;
-    for ( size_t iwgt = 0; iwgt < lhevt->weights().size(); ++iwgt ) {
-      double wgt = lhevt->weights().at(iwgt);
-      /*
-      const LHEEventProduct::WGT& wgt = lhevt->weights().at(iwgt);
+  //double reweight00 = .000022640;
+  //int numlheevents = 10;
+  if( lhevt->weights().size() ) 
+    {
       if (debug_)
-	std::cout << "DEBUG::\t" << wgt.id << ' ' 
-		  << std::scientific << wgt.wgt << std::endl;
+	std::cout << "DEBUG::weights:" << std::endl;
+      for ( size_t iwgt = 0; iwgt < lhevt->weights().size(); ++iwgt ) 
+	{
+	  //double wgt = lhevt->weights().at(iwgt); //i commented out
+	  const LHEEventProduct::WGT& wgt = lhevt->weights().at(iwgt); //i uncommented
+	    if (debug_)
+	    std::cout << "DEBUG::\t" << wgt.id << ' ' 
+	    << std::scientific << wgt.wgt << std::endl;
+	    
+	    //put all weights as individual products
+	    std::stringstream sskey; //i must have added this later
+	    sskey << "mgreweight" << iwgt; //i must have added this later
+	    std::string key = sskey.str(); //i must have added this later
+	    if (produceAllWeights_ && !makeWeightsMap_) 
+	    {
+	    std::auto_ptr<double> pOut(new double(wgt.wgt));
+	    std::string key = wgt.id;
+	    if (debug_)
+	    std::cout << "DEBUG::before replace: " << key << std::endl;
+	    //std::replace(key.begin(), key.end(), '_', '-'); //i commented this line out after apparently changing a colon to a hyphen as the last argument to std::replace
+            key.erase(std::remove(key.begin(),key.end(),'_'),key.end()); //i added this line
+	    if (debug_)
+	    std::cout << "DEBUG::after replace: " << key << std::endl;
+	    ev.put(pOut , key);
+	    }
+	    if (!produceAllWeights_ && !makeWeightsMap_) 
+	    if (label_==wgt.id)
+	    prodWeight = wgt.wgt;
       
-      //put all weights as individual products
-      if (produceAllWeights_ && !makeWeightsMap_) {
-	std::auto_ptr<double> pOut(new double(wgt.wgt));
-	std::string key = wgt.id;
-	if (debug_)
-	  std::cout << "DEBUG::before replace: " << key << std::endl;
-	std::replace(key.begin(), key.end(), '_', ':');
-	if (debug_)
-	  std::cout << "DEBUG::after replace: " << key << std::endl;
-	ev.put(pOut , key);
-      }
-      if (!produceAllWeights_ && !makeWeightsMap_) 
-	if (label_==wgt.id)
-	  prodWeight = wgt.wgt;
+	    //generate the weighs map as a product
+	    if (makeWeightsMap_ && !produceAllWeights_)
+	    (*weightMap)[wgt.id] = wgt.wgt; //it's here that ends the part i uncommented
+	  
+	  //double wgt = lhevt->weights().at(iwgt); //i say it's not in jared's
+	  //put all weights as individual products
+	  //std::stringstream sskey; //i must have originally removed this
+	  //sskey << "mg_reweight_" << iwgt; //i must have originally removed this
+	  //std::string key = sskey.str();  //i must have originally removed this
+	  /*if (produceAllWeights_ && !makeWeightsMap_) //i commented this block out
+	    {
+	      std::auto_ptr<double> pOut(new double(wgt));
+	      if (debug_)
+		std::cout << "DEBUG::before replace: " << key << std::endl;
+	      std::replace(key.begin(), key.end(), '_', ':');
+	      if (debug_)
+		std::cout << "DEBUG::after replace: " << key << std::endl;
+	      ev.put(pOut , key);
+	    }
+	  if (!produceAllWeights_ && !makeWeightsMap_) 
+	    if (label_==sskey.str())
+	      prodWeight = wgt;
       
-      //generate the weighs map as a product
-      if (makeWeightsMap_ && !produceAllWeights_)
-	(*weightMap)[wgt.id] = wgt.wgt;
-      */
-
-      //put all weights as individual products
-      std::stringstream sskey;
-      sskey << "mg_reweight_" << iwgt;
-      std::string key = sskey.str();
-      if (produceAllWeights_ && !makeWeightsMap_) {
-	std::auto_ptr<double> pOut(new double(wgt));
-	if (debug_)
-	  std::cout << "DEBUG::before replace: " << key << std::endl;
-	std::replace(key.begin(), key.end(), '_', ':');
-	if (debug_)
-	  std::cout << "DEBUG::after replace: " << key << std::endl;
-	ev.put(pOut , key);
-      }
-      if (!produceAllWeights_ && !makeWeightsMap_) 
-	if (label_==sskey.str())
-	  prodWeight = wgt;
-      
-      //generate the weighs map as a product
-      if (makeWeightsMap_ && !produceAllWeights_)
-	(*weightMap)[key] = wgt;
+	  //generate the weighs map as a product
+	  if (makeWeightsMap_ && !produceAllWeights_)
+	    (*weightMap)[key] = wgt; */ //it ends here the block i commented out
+	}
     }
-  }
   
   // put the std:map of weights into the event (currently not working)
   //std::auto_ptr<std::map<std::string, double> > weightMapP(new std::map<std::string,double>(weightMap));
   if (makeWeightsMap_) 
     ev.put(weightMap , "MGWeightMap");
   
-  if (!produceAllWeights_ && !makeWeightsMap_) {
-    std::auto_ptr<double> pOut(new double(prodWeight));
-    ev.put( pOut);
-  }
-  
+  if (!produceAllWeights_ && !makeWeightsMap_) 
+    {
+      std::auto_ptr<double> pOut(new double(prodWeight));
+      ev.put( pOut);
+    }
+
+  /*if (produceAllWeights_ && !makeWeightsMap_) ////////////////////HERE IS MY ADDITION
+    {
+      std::auto_ptr<double> pOut(new double(mgreweight00));
+      ev.put(pOut);
+      std::auto_ptr<double> pOut(new int(numlheevents));
+      ev.put(pOut);
+     }*/
+
   /* this is an EventSetup example
   //Read SetupData from the SetupRecord in the EventSetup
   ESHandle<SetupData> pSetup;
@@ -205,7 +228,8 @@ void LHEWeightProducer::beginJob()
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
-void LHEWeightProducer::endJob() {
+void LHEWeightProducer::endJob() 
+{
 }
 
 // ------------ method called when starting to processes a run  ------------
@@ -237,7 +261,8 @@ void LHEWeightProducer::endJob() {
 */
  
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
-void LHEWeightProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+void LHEWeightProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) 
+{
   //The following says we do not know what parameters are allowed so do no validation
   // Please change this to state exactly what you do use, even if it is no parameters
   edm::ParameterSetDescription desc;
