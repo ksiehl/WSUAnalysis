@@ -64,7 +64,7 @@ class LHEWeightProducer : public edm::EDProducer
       //virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
 
       // ----------member data ---------------------------
-      edm::EDGetTokenT<reco::> lheToken_; //added for new requirement of consumes call
+      edm::EDGetTokenT<GenEventInfoProduct> lheToken_; //added for new requirement of consumes call
       edm::InputTag lhesrc_;
       std::string label_;
       bool makeWeightsMap_;

@@ -75,7 +75,7 @@ LHEWeightProducer::LHEWeightProducer(const edm::ParameterSet& cfg):
   ////if you want to put into the Run
   //produces <double,InRun>();
   
-  //lheToken_ = consumes<reco::>(lhesrc_);
+  lheToken_ = consumes<GenEventInfoProduct>(lhesrc_); //added for new requirement
 }
 
 
@@ -95,7 +95,7 @@ void LHEWeightProducer::produce(edm::Event& ev, const edm::EventSetup& es)
   //edm::Handle<GenEventInfoProduct> lhevt; //i added edm:: and commented
   ev.getByLabel(lhesrc_,lhevt);
 
-  edm::Handle<> lheColl; //added for new requirement
+  edm::Handle<GenEventInfoProduct> lheColl; //added for new requirement
   ev.getByToken(lheToken_, lheColl); //added for new requirement
   
   /****
