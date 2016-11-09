@@ -17,8 +17,8 @@ process.source = cms.Source("PoolSource",
 )
 
 MGWeightsFromLHE = cms.EDProducer('LHEWeightProducer',
-    #lheSrc            = cms.InputTag("source"),
-    lheSrc            = cms.InputTag("generator"),
+    lheSrc            = cms.InputTag("source"),
+    #lheSrc            = cms.InputTag("generator"),
     weightLabel       = cms.string("mg_reweight_13"),
     makeWeightsMap    = cms.untracked.bool(True),
     produceAllWeights = cms.untracked.bool(False),
