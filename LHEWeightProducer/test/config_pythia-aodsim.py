@@ -127,11 +127,11 @@ from WSUAnalysis.LHEWeightProducer.lheWeightProducer_cfi import MGWeightsFromLHE
 
 process.weightsMap = MGWeightsFromLHE.clone()
 
-process.deezWeights = MGWeightsFromLHE.clone(
+process.allWeights = MGWeightsFromLHE.clone(
     makeWeightsMap = cms.untracked.bool(False),
     produceAllWeights = cms.untracked.bool(True),
     )
-process.MGWeights = cms.Sequence(process.deezWeights + process.weightsMap)
+process.MGWeights = cms.Sequence(process.allWeights + process.weightsMap)
 
 ######back to other code
 
