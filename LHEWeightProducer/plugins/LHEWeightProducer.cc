@@ -13,7 +13,7 @@ LHEWeightProducer::LHEWeightProducer(const edm::ParameterSet& cfg):
   //map based product not quite working yet
   if (makeWeightsMap_ && !produceAllWeights_)
     produces <std::map<std::basic_string<char>,double> >("MGWeightMap");
-  ///////////produces <double>("mgreweight0");//////////////
+  produces <double>("mgreweight0");////FIXME:This should work, it was commented out
   //loop over all weight names and generate a product
   if (produceAllWeights_ && !makeWeightsMap_)
     for (int wgtNum = 0; wgtNum < numWeights_; ++wgtNum) 
@@ -96,7 +96,7 @@ void LHEWeightProducer::produce(edm::Event& ev, const edm::EventSetup& es)
   //ev.getByLabel(lhesrc_,lhevt);
 
   //edm::Handle<GenEventInfoProduct> lheColl; //added for new requirement
-  ev.getByToken(lheToken_, lheevt); //added for new requirement
+  ev.getByToken(lheToken_, lhevt); //added for new requirement
   
   /****
        const lhef::HEPEUP hepeup_ = lhevt->hepeup();
@@ -163,7 +163,7 @@ void LHEWeightProducer::produce(edm::Event& ev, const edm::EventSetup& es)
 	    ev.put(pOut , key);
 	    }
 	    if (!produceAllWeights_ && !makeWeightsMap_) 
-	    if (label_==wgt.id)
+	    if (label_== wgt.id)
 	    prodWeight = wgt.wgt;
       
 	    //generate the weighs map as a product
@@ -198,12 +198,12 @@ void LHEWeightProducer::produce(edm::Event& ev, const edm::EventSetup& es)
   // put the std:map of weights into the event (currently not working)
   //std::auto_ptr<std::map<std::string, double> > weightMapP(new std::map<std::string,double>(weightMap));
   if (makeWeightsMap_) 
-    ev.put(weightMap , "MGWeightMap");
+    ev.put(weightMap, "MGWeightMap");
   
   if (!produceAllWeights_ && !makeWeightsMap_) 
     {
       std::auto_ptr<double> pOut(new double(prodWeight));
-      ev.put( pOut);
+      ev.put(pOut);
     }
 
   /*if (produceAllWeights_ && !makeWeightsMap_) ////////////////////HERE IS MY ADDITION

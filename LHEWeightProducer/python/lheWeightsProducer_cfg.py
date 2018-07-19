@@ -13,7 +13,7 @@ process.maxEvents = cms.untracked.PSet(
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
         #'file:/afs/cern.ch/user/s/sturdy/work/WSUAnalysis/anomalous_couplings/GEN_TO_RECO/step1/NEWER_TRY_multi.root'
-	'file:/.root'
+	'file:/.root'#FIXME: What is this?
     )
 )
 
@@ -24,7 +24,7 @@ MGWeightsFromLHE = cms.EDProducer('LHEWeightProducer',
     weightLabel       = cms.string("mg_reweight_XX"),
     makeWeightsMap    = cms.untracked.bool(True),
     produceAllWeights = cms.untracked.bool(False),
-    numWeights        = cms.int32(50),
+    numWeights        = cms.int32(50),#FIXME: 50 or 51?
     debug             = cms.untracked.bool(False)
 )
 process.weightsMap = MGWeightsFromLHE.clone()
